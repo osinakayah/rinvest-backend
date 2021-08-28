@@ -3,22 +3,24 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { UsersModule } from './users/users.module';
-import { UserModel } from './users/models/user.model';
 import { AuthModule } from './auth/auth.module';
+import { DatabaseModule } from './core/database/database.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
-    SequelizeModule.forRoot({
-      dialect: 'postgres',
-      host: 'localhost',
-      port: 3306,
-      username: 'osinakayah',
-      password: 'root',
-      database: 'rinvest',
-      models: [UserModel],
-    }),
+    ConfigModule.forRoot({ isGlobal: true }),
+    // SequelizeModule.forRoot({
+    //   dialect: 'postgres',
+    //   host: 'localhost',
+    //   port: 3306,
+    //   username: 'osinakayah',
+    //   password: 'root',
+    //   database: 'rinvest',
+    // }),
     UsersModule,
     AuthModule,
+    DatabaseModule,
   ],
   controllers: [AppController],
   providers: [AppService],
