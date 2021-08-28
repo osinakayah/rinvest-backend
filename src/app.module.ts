@@ -9,12 +9,12 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     SequelizeModule.forRoot({
-      dialect: 'mysql',
+      dialect: 'postgres',
       host: 'localhost',
       port: 3306,
-      username: 'root',
+      username: 'osinakayah',
       password: 'root',
-      database: 'test',
+      database: 'rinvest',
       models: [UserModel],
     }),
     UsersModule,
