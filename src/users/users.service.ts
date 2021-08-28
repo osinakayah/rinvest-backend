@@ -5,12 +5,16 @@ import { User } from './models/user.entity';
 
 @Injectable()
 export class UsersService {
-  async register(createUserDto: CreateUserDto): Promise<undefined | void> {
-    // this.userModel.create({
-    //   password: createUserDto.password,
-    //   name: createUserDto.name,
-    //   email: '',
-    //   gender: '',
-    // });
+  constructor(
+    @InjectModel(User)
+    private userModel: typeof User,
+  ) {}
+
+  async register(createUserDto: CreateUserDto): Promise<any> {
+    return this.userModel.create({
+      password: 'password',
+      email: 'email',
+      gender: 'female',
+    });
   }
 }
