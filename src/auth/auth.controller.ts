@@ -4,6 +4,7 @@ import {
   Request,
   UseGuards,
   Body,
+  Param,
   Get,
 } from '@nestjs/common';
 import { LocalAuthGuard } from './local-auth.guard';
@@ -28,6 +29,14 @@ export class AuthController {
   @Post('register')
   async register(@Body() createUserDto: CreateUserDto) {
     return this.usersService.register(createUserDto);
+  }
+
+  @Get('activate/:userId/:token')
+  async activateAccount(
+    @Param('token') token: string,
+    @Param('userId') userId: string,
+  ) {
+    return this.usersService.activateAccount(token, userId);
   }
 
   @UseGuards(JwtAuthGuard)

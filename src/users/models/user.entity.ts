@@ -53,5 +53,5 @@ export class User extends Model<IUser> {
     type: DataType.BOOLEAN,
     defaultValue: false,
   })
-  isActive: string;
+  isActive: boolean;
 }

@@ -25,11 +25,11 @@ export class AddressService {
       const masterPrivateKey = hdwallet.privateExtendedKey();
       const masterPublicKey = hdwallet.publicExtendedKey();
 
-      const lastIndex = 0;
-      const coinType = network === 'mainnet' ? 60 : 1;
-      const wallet = hdwallet
-        .derivePath(`m/84'/${coinType}'/0'/0/${lastIndex}`)
-        .getWallet();
+      // const lastIndex = 0;
+      // const coinType = network === 'mainnet' ? 60 : 1;
+      // const wallet = hdwallet
+      //   .derivePath(`m/84'/${coinType}'/0'/0/${lastIndex}`)
+      //   .getWallet();
     }
   }
 }
