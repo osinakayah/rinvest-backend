@@ -9,6 +9,7 @@ import { User } from './users/models/user.entity';
 import { Token } from './auth/models/token.model';
 import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notification/notification.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NotificationModule } from './notification/notification.module';
     AuthModule,
     AddressModule,
     NotificationModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
