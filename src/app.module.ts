@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { User } from './users/models/user.entity';
 import { Token } from './auth/models/token.model';
 import { AddressModule } from './address/address.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AddressModule } from './address/address.module';
     UsersModule,
     AuthModule,
     AddressModule,
+    NotificationModule,
   ],
   controllers: [AppController],
   providers: [AppService],
