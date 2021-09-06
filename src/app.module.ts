@@ -10,6 +10,7 @@ import { Token } from './auth/models/token.model';
 import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notification/notification.module';
 import { MailModule } from './mail/mail.module';
+import { StakingModule } from './staking/staking.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { MailModule } from './mail/mail.module';
     AddressModule,
     NotificationModule,
     MailModule,
+    StakingModule,
   ],
   controllers: [AppController],
   providers: [AppService],
