@@ -21,7 +21,8 @@ module.exports = {
       },
       purpose: {
         allowNull: false,
-        type: Sequelize.STRING,
+        type: Sequelize.ENUM,
+        values: ['ACTIVATE_ACCOUNT'],
       },
       expiration: {
         allowNull: false,

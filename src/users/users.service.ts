@@ -3,7 +3,6 @@ import { CreateUserDto } from '../auth/dtos/create.user.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './models/user.entity';
 import { Token } from '../auth/models/token.model';
-import sequelize from 'sequelize';
 import * as bcryptjs from 'bcryptjs';
 
 @Injectable()
@@ -16,28 +15,14 @@ export class UsersService {
   async register(createUserDto: CreateUserDto) {
     const existingAccount = await this.userModel.findOne({
       where: {
-        [sequelize.Op.or]: [
-          { email: createUserDto.email },
-          { username: createUserDto.username },
-        ],
+        email: createUserDto.email,
       },
     });
-    if (existingAccount && existingAccount.email === createUserDto.email) {
+    if (existingAccount) {
       throw new HttpException(
         {
           status: HttpStatus.BAD_REQUEST,
           error: 'Email has already been used',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
-    } else if (
-      existingAccount &&
-      existingAccount.username === createUserDto.username
-    ) {
-      throw new HttpException(
-        {
-          status: HttpStatus.BAD_REQUEST,
-          error: 'Username has already been used',
         },
         HttpStatus.BAD_REQUEST,
       );
@@ -51,7 +36,6 @@ export class UsersService {
     await this.userModel.create({
       firstName: createUserDto.firstName,
       lastName: createUserDto.lastName,
-      username: createUserDto.username,
       password: hash,
       email: createUserDto.email,
     });

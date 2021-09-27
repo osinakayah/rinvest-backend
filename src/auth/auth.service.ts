@@ -15,10 +15,10 @@ export class AuthService {
     @InjectModel(User) private userModel: typeof User,
   ) {}
 
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.userModel.findOne({
       where: {
-        [sequelize.Op.or]: [{ email: username }, { username: username }],
+        email,
       },
       attributes: ['email', 'password'],
     });
@@ -32,7 +32,7 @@ export class AuthService {
     return null;
   }
   async login(user: User) {
-    const payload = { username: user.username };
+    const payload = { email: user.email };
     return {
       access_token: this.jwtService.sign(payload),
     };
