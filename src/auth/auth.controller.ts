@@ -38,10 +38,4 @@ export class AuthController {
   ) {
     return this.usersService.activateAccount(token, userId);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
 }
