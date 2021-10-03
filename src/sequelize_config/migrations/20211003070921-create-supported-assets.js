@@ -10,18 +10,46 @@ module.exports = {
         primaryKey: true,
         unique: true,
       },
-      asset: {
+      name: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      assetCode: {
+      code: {
         allowNull: false,
         type: Sequelize.STRING,
       },
-      assetType: {
+      decimals: {
         allowNull: false,
-        type: Sequelize.ENUM,
-        values: ['native', 'erc20', 'bep20'],
+        type: Sequelize.INTEGER,
+      },
+      contractAddress: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      matchingAsset: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      color: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      coinGeckoId: {
+        allowNull: true,
+        type: Sequelize.STRING,
+      },
+      chain: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      type: {
+        allowNull: false,
+        type: Sequelize.STRING,
+      },
+      isEnable: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,
@@ -35,6 +63,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('UserAddresses');
+    return queryInterface.dropTable('Assets');
   },
 };

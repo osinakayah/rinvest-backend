@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.createTable('Tokens', {
+    return queryInterface.createTable('UserMnemonics', {
       id: {
         type: Sequelize.UUID,
         defaultValue: Sequelize.literal('uuid_generate_v4()'),
@@ -20,19 +20,10 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      token: {
+      mnemonic: {
         allowNull: false,
         type: Sequelize.STRING,
         unique: true,
-      },
-      purpose: {
-        allowNull: false,
-        type: Sequelize.ENUM,
-        values: ['ACTIVATE_ACCOUNT'],
-      },
-      expiration: {
-        allowNull: false,
-        type: Sequelize.DATE,
       },
       createdAt: {
         allowNull: false,
@@ -46,6 +37,6 @@ module.exports = {
   },
 
   down: (queryInterface, Sequelize) => {
-    return queryInterface.dropTable('Tokens');
+    return queryInterface.dropTable('UserMnemonics');
   },
 };

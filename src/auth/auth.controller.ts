@@ -11,7 +11,6 @@ import { LocalAuthGuard } from './local-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dtos/create.user.dto';
 import { UsersService } from '../users/users.service';
-import { JwtAuthGuard } from './jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {

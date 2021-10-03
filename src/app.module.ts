@@ -11,6 +11,7 @@ import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notification/notification.module';
 import { MailModule } from './mail/mail.module';
 import { StakingModule } from './staking/staking.module';
+import { UserMnemonic } from './users/models/user.mnemonic';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { StakingModule } from './staking/staking.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME_DEVELOPMENT,
-      models: [User, Token],
+      models: [User, Token, UserMnemonic],
       synchronize: false,
     }),
     UsersModule,

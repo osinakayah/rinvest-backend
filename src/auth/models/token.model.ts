@@ -22,7 +22,7 @@ export class Token extends Model {
   purpose: string;
 
   @Column({
-    type: DataType.STRING,
+    type: DataType.DATE,
     allowNull: false,
   })
   expiration: string;
