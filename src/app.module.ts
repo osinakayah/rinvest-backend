@@ -12,6 +12,7 @@ import { NotificationModule } from './notification/notification.module';
 import { MailModule } from './mail/mail.module';
 import { StakingModule } from './staking/staking.module';
 import { UserMnemonic } from './users/models/user.mnemonic';
+import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.module';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { UserMnemonic } from './users/models/user.mnemonic';
     NotificationModule,
     MailModule,
     StakingModule,
+    ChainAbstractionModule,
   ],
   controllers: [AppController],
   providers: [AppService],
