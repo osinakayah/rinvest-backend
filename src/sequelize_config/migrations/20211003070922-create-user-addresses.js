@@ -20,12 +20,17 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      address: {
+      assetId: {
+        type: Sequelize.UUID,
         allowNull: false,
-        type: Sequelize.STRING,
-        unique: true,
+        references: {
+          model: 'Assets',
+          key: 'id',
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE',
       },
-      chain: {
+      address: {
         allowNull: false,
         type: Sequelize.STRING,
       },

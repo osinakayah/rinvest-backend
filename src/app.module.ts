@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { User } from './users/models/user.entity';
 import { Token } from './auth/models/token.model';
+import { Asset } from './chain-abstraction/models/asset.entity';
+import { UserAddress } from './users/models/user.address.entity';
 import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notification/notification.module';
 import { MailModule } from './mail/mail.module';
@@ -24,7 +26,7 @@ import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.mo
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME_DEVELOPMENT,
-      models: [User, Token, UserMnemonic],
+      models: [User, Token, UserMnemonic, Asset, UserAddress],
       synchronize: false,
     }),
     UsersModule,
