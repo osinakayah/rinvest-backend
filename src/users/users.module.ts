@@ -8,13 +8,17 @@ import { UserAddress } from './models/user.address.entity';
 
 import { UsersService } from './users.service';
 import { ChainAbstractionModule } from '../chain-abstraction/chain-abstraction.module';
+import { UsersController } from './users.controller';
+import { InvestmentModule } from '../investment/investment.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([User, Token, UserMnemonic, Asset, UserAddress]),
     ChainAbstractionModule,
+    InvestmentModule,
   ],
   providers: [UsersService],
   exports: [UsersService, SequelizeModule],
+  controllers: [UsersController],
 })
 export class UsersModule {}

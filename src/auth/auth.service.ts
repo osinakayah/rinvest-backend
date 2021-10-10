@@ -20,19 +20,21 @@ export class AuthService {
       where: {
         email,
       },
-      attributes: ['email', 'password'],
+      attributes: ['email', 'password', 'id'],
     });
 
     if (user) {
       const isMatch = await bcryptjs.compare(pass, user.password);
       if (isMatch) {
-        return user;
+        return {
+          id: user.id,
+        };
       }
     }
     return null;
   }
   async login(user: User) {
-    const payload = { email: user.email };
+    const payload = { id: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };

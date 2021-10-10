@@ -4,10 +4,20 @@ import {
   Model,
   DataType,
   Sequelize,
+  HasMany,
 } from 'sequelize-typescript';
 import { IAsset } from '../interfaces/IAsset';
 
-@Table
+const options = {
+  modelName: 'Asset',
+  indexes: [
+    {
+      unique: true,
+      fields: ['id'],
+    },
+  ],
+};
+@Table(options)
 export class Asset extends Model<IAsset> {
   @Column({
     type: DataType.UUIDV4,

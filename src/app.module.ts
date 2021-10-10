@@ -15,6 +15,7 @@ import { MailModule } from './mail/mail.module';
 import { StakingModule } from './staking/staking.module';
 import { UserMnemonic } from './users/models/user.mnemonic';
 import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.module';
+import { InvestmentModule } from './investment/investment.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.mo
     MailModule,
     StakingModule,
     ChainAbstractionModule,
+    InvestmentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

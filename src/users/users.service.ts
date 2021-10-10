@@ -11,7 +11,7 @@ import { ConfigService } from '@nestjs/config';
 import * as moment from 'moment';
 import { Asset } from '../chain-abstraction/models/asset.entity';
 import { generateMnemonic } from 'bip39';
-import { ChainAbstractionService } from '../chain-abstraction/chain-abstraction.service';
+import { ChainClientService } from '../chain-abstraction/chain-client-service';
 import { getDerivationPath } from '../chain-abstraction/utils/derivationPath';
 import { assets as cryptoassets, chains } from '@liquality/cryptoassets';
 import { isEthereumChain } from '../chain-abstraction/utils/asset';
@@ -20,7 +20,7 @@ import { isEthereumChain } from '../chain-abstraction/utils/asset';
 export class UsersService {
   constructor(
     private readonly configService: ConfigService,
-    private readonly chainAbstractionService: ChainAbstractionService,
+    private readonly chainClientService: ChainClientService,
     @InjectModel(User) private userModel: typeof User,
     @InjectModel(Token) private tokenModel: typeof Token,
     @InjectModel(Asset) private assetModel: typeof Asset,
@@ -111,7 +111,7 @@ export class UsersService {
           'default',
         );
 
-        const client = this.chainAbstractionService.createClient(
+        const client = this.chainClientService.createClient(
           assetCode,
           network,
           mnemonic,

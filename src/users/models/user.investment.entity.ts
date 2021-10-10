@@ -9,12 +9,12 @@ import {
   UpdatedAt,
   ForeignKey,
 } from 'sequelize-typescript';
-import { IUserAddress } from '../interfaces/IUserAddress';
 import { Asset } from '../../chain-abstraction/models/asset.entity';
+import { IUserInvestment } from '../interfaces/IUserInvestment';
 import { User } from './user.entity';
 
 const options = {
-  modelName: 'UserAddress',
+  modelName: 'UserInvestment',
   indexes: [
     {
       unique: true,
@@ -29,7 +29,7 @@ const options = {
   ],
 };
 @Table(options)
-export class UserAddress extends Model<IUserAddress> {
+export class UserInvestment extends Model<IUserInvestment> {
   @Column({
     type: DataType.UUIDV4,
     defaultValue: Sequelize.literal('uuid_generate_v4()'),
@@ -48,8 +48,9 @@ export class UserAddress extends Model<IUserAddress> {
   @Column({
     allowNull: false,
     type: DataType.STRING,
+    defaultValue: '0',
   })
-  address: string;
+  balance: string;
 
   @CreatedAt
   createdAt: Date;
@@ -59,4 +60,7 @@ export class UserAddress extends Model<IUserAddress> {
 
   @BelongsTo(() => Asset)
   asset: Asset;
+
+  @BelongsTo(() => User)
+  user: User;
 }
