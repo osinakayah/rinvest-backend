@@ -3,7 +3,6 @@ import {
   assets as cryptoassets,
   unitToCurrency,
 } from '@liquality/cryptoassets';
-import { getDerivationPath } from './utils/derivationPath';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
 import { Asset } from './models/asset.entity';
@@ -14,7 +13,6 @@ import { ChainClientService } from './chain-client-service';
 @Injectable()
 export class ChainAbstractionService {
   constructor(
-    private readonly configService: ConfigService,
     private readonly chainClientService: ChainClientService,
 
     @InjectModel(Asset) private assetModel: typeof Asset,
@@ -46,26 +44,13 @@ export class ChainAbstractionService {
       },
     });
 
-    const network = this.configService.get('APP_NETWORK');
-    const index = parseInt(this.configService.get('DERIVATION_INDEX'));
-
     if (userMnemonic) {
       for (let i = 0; i < addresses.length; i++) {
         const address = addresses[i];
 
-        const { chain } = cryptoassets[address.asset.code];
-        const derivationPath = getDerivationPath(
-          chain,
-          network,
-          index,
-          'default',
-        );
-
         const client = this.chainClientService.createClient(
           address.asset.code,
-          network,
           userMnemonic.mnemonic,
-          derivationPath,
         );
         const balance =
           addresses.length === 0

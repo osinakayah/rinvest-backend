@@ -27,15 +27,17 @@ import { BitcoinSwapProvider } from '@liquality/bitcoin-swap-provider';
 import { BitcoinEsploraSwapFindProvider } from '@liquality/bitcoin-esplora-swap-find-provider';
 import { BitcoinRpcFeeProvider } from '@liquality/bitcoin-rpc-fee-provider';
 import { BitcoinFeeApiProvider } from '@liquality/bitcoin-fee-api-provider';
+import { ConfigService } from '@nestjs/config';
+import { getDerivationPath } from './utils/derivationPath';
 
 @Injectable()
 export class ChainClientService {
-  public createClient(
-    asset: string,
-    network: string,
-    mnemonic: string,
-    derivationPath: string,
-  ) {
+  constructor(private readonly configService: ConfigService) {}
+  public createClient(asset: string, mnemonic: string) {
+    const network = this.configService.get('APP_NETWORK');
+    const { chain } = cryptoassets[asset];
+    const index = parseInt(this.configService.get('DERIVATION_INDEX'));
+    const derivationPath = getDerivationPath(chain, network, index, 'default');
     const accountType = 'default';
     const assetData = cryptoassets[asset];
 

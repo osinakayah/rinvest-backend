@@ -12,7 +12,6 @@ import * as moment from 'moment';
 import { Asset } from '../chain-abstraction/models/asset.entity';
 import { generateMnemonic } from 'bip39';
 import { ChainClientService } from '../chain-abstraction/chain-client-service';
-import { getDerivationPath } from '../chain-abstraction/utils/derivationPath';
 import { assets as cryptoassets, chains } from '@liquality/cryptoassets';
 import { isEthereumChain } from '../chain-abstraction/utils/asset';
 
@@ -66,27 +65,27 @@ export class UsersService {
         .add(this.configService.get('TOKENS_LIFETIME_IN_MINUTES'), 'minutes')
         .toDate(),
     });
+    this.initNewUserAccount(createdUser.id);
   }
-  private async initNewUserAccount(userId: string) {
-    const createdUser = await this.userModel.findOne({
-      where: {
-        id: userId,
-      },
-    });
+  async initNewUserAccount(userId: string) {
+    const createdUser = await this.userModel.findByPk(userId);
     if (createdUser) {
-      await this.userMnemonicModel.create({
-        userId: createdUser.id,
-        mnemonic: generateMnemonic(),
+      const existingMnemonic = await this.userMnemonicModel.findOne({
+        where: {
+          userId: createdUser.id,
+        },
       });
+      if (!existingMnemonic) {
+        await this.userMnemonicModel.create({
+          userId: createdUser.id,
+          mnemonic: generateMnemonic(),
+        });
+      }
       await this.generateAddresses(userId);
     }
   }
   public async generateAddresses(userId: string) {
-    const createdUser = await this.userModel.findOne({
-      where: {
-        id: userId,
-      },
-    });
+    const createdUser = await this.userModel.findByPk(userId);
     const userMnemonic = await this.userMnemonicModel.findOne({
       where: {
         userId,
@@ -100,22 +99,11 @@ export class UsersService {
       });
       for (const asset of supportedAssets) {
         const assetCode = asset.code;
-        const network = this.configService.get('APP_NETWORK');
         const mnemonic = userMnemonic.mnemonic;
-        const index = parseInt(this.configService.get('DERIVATION_INDEX'));
-        const { chain } = cryptoassets[assetCode];
-        const derivationPath = getDerivationPath(
-          chain,
-          network,
-          index,
-          'default',
-        );
 
         const client = this.chainClientService.createClient(
           assetCode,
-          network,
           mnemonic,
-          derivationPath,
         );
         const addresses = await client.wallet.getAddresses();
         const result = addresses[0];
@@ -133,6 +121,11 @@ export class UsersService {
           },
         });
         if (!existing) {
+          console.log({
+            userId,
+            assetId: asset.id,
+            address: formattedAddress,
+          });
           await this.userAddressModel.create({
             userId,
             assetId: asset.id,

@@ -30,7 +30,7 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      balance: {
+      amount: {
         allowNull: false,
         type: Sequelize.STRING,
         defaultValue: '0',

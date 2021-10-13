@@ -3,5 +3,5 @@ export interface IUserInvestment {
   assetId: string;
   id?: string;
 
-  balance: string;
+  amount: string;
 }

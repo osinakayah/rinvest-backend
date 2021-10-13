@@ -50,7 +50,7 @@ export class UserInvestment extends Model<IUserInvestment> {
     type: DataType.STRING,
     defaultValue: '0',
   })
-  balance: string;
+  amount: string;
 
   @CreatedAt
   createdAt: Date;

@@ -16,6 +16,7 @@ import { StakingModule } from './staking/staking.module';
 import { UserMnemonic } from './users/models/user.mnemonic';
 import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.module';
 import { InvestmentModule } from './investment/investment.module';
+import { UserInvestment } from './users/models/user.investment.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,7 @@ import { InvestmentModule } from './investment/investment.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME_DEVELOPMENT,
-      models: [User, Token, UserMnemonic, Asset, UserAddress],
+      models: [User, Token, UserMnemonic, Asset, UserAddress, UserInvestment],
       synchronize: false,
     }),
     UsersModule,
