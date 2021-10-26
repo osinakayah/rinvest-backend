@@ -4,11 +4,14 @@ import {
   unitToCurrency,
 } from '@liquality/cryptoassets';
 import { ConfigService } from '@nestjs/config';
+import BN from 'bignumber.js';
 import { InjectModel } from '@nestjs/sequelize';
 import { Asset } from './models/asset.entity';
 import { UserAddress } from '../users/models/user.address.entity';
 import { UserMnemonic } from '../users/models/user.mnemonic';
 import { ChainClientService } from './chain-client-service';
+import { AssetNairaRate } from '../asset-rates/models/naira-rate';
+import { prettyBalance } from './utils/coinFormatter';
 
 @Injectable()
 export class ChainAbstractionService {
@@ -18,11 +21,13 @@ export class ChainAbstractionService {
     @InjectModel(Asset) private assetModel: typeof Asset,
     @InjectModel(UserAddress) private userAddressModel: typeof UserAddress,
     @InjectModel(UserMnemonic) private userMnemonicModel: typeof UserMnemonic,
+    @InjectModel(AssetNairaRate)
+    private assetNairaRateModel: typeof AssetNairaRate,
   ) {}
 
-  async getAvailableCoinsReport(userId: string) {
+  async getAvailableCoinsReport(userId: string, fiatCode = 'NGN') {
     const availableCoinsReport = {
-      sum: 0,
+      sum: '0',
       assets: [],
     };
 
@@ -45,6 +50,7 @@ export class ChainAbstractionService {
     });
 
     if (userMnemonic) {
+      let sumBalance = new BN(0);
       for (let i = 0; i < addresses.length; i++) {
         const address = addresses[i];
 
@@ -57,12 +63,39 @@ export class ChainAbstractionService {
             ? 0
             : (await client.chain.getBalance([address.address])).toNumber();
 
-        availableCoinsReport.assets.push({
+        const currencyBalance = unitToCurrency(
+          cryptoassets[address.asset.code],
+          balance,
+        );
+        const singleAsset = {
+          code: address.asset.code,
+          name: address.asset.name,
           address: address.address,
-          balance: unitToCurrency(cryptoassets[address.asset.code], balance),
+          balance: prettyBalance(balance, address.asset.code),
+          fiatBalance: '0',
+        };
+
+        const rates = await this.assetNairaRateModel.findOne({
+          where: {
+            baseAsset: fiatCode,
+          },
+          attributes: ['rates'],
         });
+        if (rates && rates.rates[address.asset.code]) {
+          const r = new BN(currencyBalance).dividedBy(
+            rates.rates[address.asset.code],
+          );
+          singleAsset.fiatBalance = `${r.toFormat(
+            2,
+            BN.ROUND_CEIL,
+          )} ${fiatCode}`;
+          sumBalance = sumBalance.plus(r);
+        }
+        availableCoinsReport.assets.push(singleAsset);
       }
+      availableCoinsReport.sum = sumBalance.toFormat(2, BN.ROUND_CEIL);
     }
+
     return availableCoinsReport;
   }
 }

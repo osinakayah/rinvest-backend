@@ -6,10 +6,17 @@ import { User } from '../users/models/user.entity';
 import { UserMnemonic } from '../users/models/user.mnemonic';
 import { Asset } from './models/asset.entity';
 import { UserAddress } from '../users/models/user.address.entity';
+import { AssetNairaRate } from '../asset-rates/models/naira-rate';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, UserMnemonic, Asset, UserAddress]),
+    SequelizeModule.forFeature([
+      User,
+      UserMnemonic,
+      Asset,
+      UserAddress,
+      AssetNairaRate,
+    ]),
   ],
   providers: [ChainClientService, ChainAbstractionService],
   exports: [ChainClientService, ChainAbstractionService],

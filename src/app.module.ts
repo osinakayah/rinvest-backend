@@ -8,6 +8,7 @@ import { ConfigModule } from '@nestjs/config';
 import { User } from './users/models/user.entity';
 import { Token } from './auth/models/token.model';
 import { Asset } from './chain-abstraction/models/asset.entity';
+import { AssetNairaRate } from './asset-rates/models/naira-rate';
 import { UserAddress } from './users/models/user.address.entity';
 import { AddressModule } from './address/address.module';
 import { NotificationModule } from './notification/notification.module';
@@ -17,6 +18,7 @@ import { UserMnemonic } from './users/models/user.mnemonic';
 import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.module';
 import { InvestmentModule } from './investment/investment.module';
 import { UserInvestment } from './users/models/user.investment.entity';
+import { AssetRatesModule } from './asset-rates/asset-rates.module';
 
 @Module({
   imports: [
@@ -28,7 +30,15 @@ import { UserInvestment } from './users/models/user.investment.entity';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME_DEVELOPMENT,
-      models: [User, Token, UserMnemonic, Asset, UserAddress, UserInvestment],
+      models: [
+        User,
+        Token,
+        UserMnemonic,
+        Asset,
+        UserAddress,
+        UserInvestment,
+        AssetNairaRate,
+      ],
       synchronize: false,
     }),
     UsersModule,
@@ -39,6 +49,7 @@ import { UserInvestment } from './users/models/user.investment.entity';
     StakingModule,
     ChainAbstractionModule,
     InvestmentModule,
+    AssetRatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

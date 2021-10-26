@@ -4,32 +4,22 @@ import {
   Model,
   DataType,
   Sequelize,
-  BelongsTo,
   CreatedAt,
   UpdatedAt,
-  ForeignKey,
 } from 'sequelize-typescript';
-import { IUserAddress } from '../interfaces/IUserAddress';
-import { Asset } from '../../chain-abstraction/models/asset.entity';
-import { User } from './user.entity';
+import { IAssetNairaRate } from '../interfaces/IAssetNairaRate';
 
 const options = {
-  modelName: 'UserAddress',
+  modelName: 'AssetNairaRate',
   indexes: [
     {
       unique: true,
       fields: ['id'],
     },
-    {
-      fields: ['assetId'],
-    },
-    {
-      fields: ['userId'],
-    },
   ],
 };
 @Table(options)
-export class UserAddress extends Model<IUserAddress> {
+export class AssetNairaRate extends Model<IAssetNairaRate> {
   @Column({
     type: DataType.UUIDV4,
     defaultValue: Sequelize.literal('uuid_generate_v4()'),
@@ -39,29 +29,21 @@ export class UserAddress extends Model<IUserAddress> {
   })
   id: string;
 
-  @ForeignKey(() => User)
   @Column({
     allowNull: false,
-    type: DataType.STRING,
+    type: DataType.JSON,
   })
-  userId: string;
-
-  @ForeignKey(() => Asset)
-  // @BelongsTo(() => Asset, 'id')
-  assetId: string;
+  rates: any;
 
   @Column({
     allowNull: false,
     type: DataType.STRING,
   })
-  address: string;
+  baseAsset: string;
 
   @CreatedAt
   createdAt: Date;
 
   @UpdatedAt
   updatedAt: Date;
-
-  @BelongsTo(() => Asset)
-  asset: Asset;
 }

@@ -69,18 +69,21 @@ export class UsersService {
   }
   async initNewUserAccount(userId: string) {
     const createdUser = await this.userModel.findByPk(userId);
+
     if (createdUser) {
       const existingMnemonic = await this.userMnemonicModel.findOne({
         where: {
           userId: createdUser.id,
         },
       });
+
       if (!existingMnemonic) {
         await this.userMnemonicModel.create({
           userId: createdUser.id,
           mnemonic: generateMnemonic(),
         });
       }
+
       await this.generateAddresses(userId);
     }
   }
@@ -91,6 +94,7 @@ export class UsersService {
         userId,
       },
     });
+
     if (createdUser && userMnemonic) {
       const supportedAssets = await this.assetModel.findAll({
         where: {
@@ -121,14 +125,9 @@ export class UsersService {
           },
         });
         if (!existing) {
-          console.log({
-            userId,
-            assetId: asset.id,
-            address: formattedAddress,
-          });
           await this.userAddressModel.create({
-            userId,
             assetId: asset.id,
+            userId: createdUser.id,
             address: formattedAddress,
           });
         }

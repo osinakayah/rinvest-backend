@@ -24,7 +24,7 @@ export class InvestmentService {
   ) {}
   async getInvestedCoinReport(userId: string) {
     const investedCoinReport = {
-      sum: 0,
+      sum: '0',
       assets: [],
     };
 

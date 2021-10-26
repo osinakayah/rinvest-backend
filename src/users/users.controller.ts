@@ -2,13 +2,12 @@ import { Controller, Get, UseGuards, Request } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { InvestmentService } from '../investment/investment.service';
 import { ChainAbstractionService } from '../chain-abstraction/chain-abstraction.service';
-import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
   constructor(
     private readonly chainAbstractionService: ChainAbstractionService,
-    private readonly investmentService: InvestmentService, // private readonly usersService: UsersService,
+    private readonly investmentService: InvestmentService,
   ) {}
 
   @UseGuards(JwtAuthGuard)
