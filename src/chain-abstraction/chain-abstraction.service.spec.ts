@@ -1,15 +1,15 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ChainClient } from './chain-abstraction.service';
+import { ChainAbstractionService } from './chain-abstraction.service';
 
 describe('ChainAbstractionService', () => {
-  let service: ChainClient;
+  let service: ChainAbstractionService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ChainClient],
+      providers: [ChainAbstractionService],
     }).compile();
 
-    service = module.get<ChainClient>(ChainClient);
+    service = module.get<ChainAbstractionService>(ChainAbstractionService);
   });
 
   it('should be defined', () => {

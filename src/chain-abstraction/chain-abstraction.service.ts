@@ -3,7 +3,6 @@ import {
   assets as cryptoassets,
   unitToCurrency,
 } from '@liquality/cryptoassets';
-import { ConfigService } from '@nestjs/config';
 import BN from 'bignumber.js';
 import { InjectModel } from '@nestjs/sequelize';
 import { Asset } from './models/asset.entity';
@@ -39,7 +38,7 @@ export class ChainAbstractionService {
         {
           as: 'asset',
           model: this.assetModel,
-          attributes: ['name', 'code'],
+          attributes: ['name', 'code', 'id'],
         },
       ],
     });
@@ -68,6 +67,7 @@ export class ChainAbstractionService {
           balance,
         );
         const singleAsset = {
+          id: address.asset.id,
           code: address.asset.code,
           name: address.asset.name,
           address: address.address,
