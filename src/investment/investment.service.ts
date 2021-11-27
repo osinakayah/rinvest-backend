@@ -121,6 +121,7 @@ export class InvestmentService {
   }
 
   private getInvestmentTransferAddress(): string {
+    // INSERT INTO public."AssetNairaRates" ("baseAsset", "rates", "createdAt", "updatedAt")VALUES('NGN','{"BTC":"3.9e-8","ETH":"5.9e-7"}', now(), now());
     return '0xd1dBee4ADC296F2E4c50d4F679058f2823d667a7';
   }
 }

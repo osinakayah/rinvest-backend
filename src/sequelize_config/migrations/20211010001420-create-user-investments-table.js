@@ -35,6 +35,12 @@ module.exports = {
         type: Sequelize.STRING,
         defaultValue: '0',
       },
+      status: {
+        allowNull: false,
+        type: Sequelize.ENUM,
+        defaultValue: 'PENDING',
+        values: ['PENDING', 'CONFIRMED', 'FAILED'],
+      },
 
       createdAt: {
         allowNull: false,

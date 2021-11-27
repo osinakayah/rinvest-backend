@@ -52,6 +52,12 @@ export class UserInvestment extends Model<IUserInvestment> {
   })
   amount: string;
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  status: string;
+
   @CreatedAt
   createdAt: Date;
 
