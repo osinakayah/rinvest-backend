@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { CreateInvestmentRequestDto } from './dtos/create.investment.request.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { UserInvestment } from '../users/models/user.investment.entity';
+import { InvestmentAddress } from './models/investment.address.entity';
 import { ChainClientService } from '../chain-abstraction/chain-client-service';
 import { Asset } from '../chain-abstraction/models/asset.entity';
 import BN from 'bignumber.js';
@@ -24,13 +25,11 @@ export class InvestmentService {
     private readonly chainClientService: ChainClientService,
     @InjectModel(AssetNairaRate)
     private assetNairaRateModel: typeof AssetNairaRate,
+
+    @InjectModel(InvestmentAddress)
+    private investmentAddressModel: typeof InvestmentAddress,
   ) {}
   async getInvestedCoinReport(userId: string, fiatCode = 'NGN') {
-    const investedCoinReport = {
-      sum: '0',
-      assets: [],
-    };
-
     const userInvestments = await this.userInvestmentModel.findAll({
       where: {
         userId,
@@ -86,11 +85,15 @@ export class InvestmentService {
   ) {
     const assetToInvest = await this.assetModel.findByPk(
       createInvestmentData.assetId,
+      {
+        attributes: ['id', 'code'],
+      },
     );
     const userMnemonic = await this.userMnemonic.findOne({
       where: {
         userId,
       },
+      attributes: ['mnemonic'],
     });
     if (assetToInvest && userMnemonic) {
       const client = this.chainClientService.createClient(
@@ -106,7 +109,7 @@ export class InvestmentService {
         ).toNumber();
 
         const txHash = await client.chain.sendTransaction({
-          to: this.getInvestmentTransferAddress(),
+          to: await this.getInvestmentTransferAddress(assetToInvest.id),
           value: new BN(amount),
         });
         if (txHash) {
@@ -116,12 +119,43 @@ export class InvestmentService {
             amount: amount.toString(),
           });
         }
-      } catch (e) {}
+      } catch (e) {
+        console.log(e);
+        throw new HttpException(
+          {
+            status: HttpStatus.BAD_REQUEST,
+            error: 'Investment failed, please try again later',
+          },
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.BAD_REQUEST,
+          error: 'Asset not found',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
-  private getInvestmentTransferAddress(): string {
+  private async getInvestmentTransferAddress(assetId: string): Promise<string> {
     // INSERT INTO public."AssetNairaRates" ("baseAsset", "rates", "createdAt", "updatedAt")VALUES('NGN','{"BTC":"3.9e-8","ETH":"5.9e-7"}', now(), now());
-    return '0xd1dBee4ADC296F2E4c50d4F679058f2823d667a7';
+    const investmentAddress = await this.investmentAddressModel.findOne({
+      where: {
+        assetId,
+      },
+    });
+    if (investmentAddress) {
+      return investmentAddress.address;
+    }
+    throw new HttpException(
+      {
+        status: HttpStatus.BAD_REQUEST,
+        error: 'Investment failed, please try again later',
+      },
+      HttpStatus.BAD_REQUEST,
+    );
   }
 }

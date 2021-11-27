@@ -7,6 +7,7 @@ import { UserInvestment } from '../users/models/user.investment.entity';
 import { Asset } from '../chain-abstraction/models/asset.entity';
 import { UserMnemonic } from '../users/models/user.mnemonic';
 import { AssetNairaRate } from '../asset-rates/models/naira-rate';
+import { InvestmentAddress } from './models/investment.address.entity';
 
 @Module({
   providers: [InvestmentService],
@@ -19,6 +20,7 @@ import { AssetNairaRate } from '../asset-rates/models/naira-rate';
       Asset,
       UserMnemonic,
       AssetNairaRate,
+      InvestmentAddress,
     ]),
   ],
 })
