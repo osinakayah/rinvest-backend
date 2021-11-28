@@ -19,6 +19,7 @@ import { ChainAbstractionModule } from './chain-abstraction/chain-abstraction.mo
 import { InvestmentModule } from './investment/investment.module';
 import { UserInvestment } from './users/models/user.investment.entity';
 import { AssetRatesModule } from './asset-rates/asset-rates.module';
+import { DepositModule } from './deposit/deposit.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AssetRatesModule } from './asset-rates/asset-rates.module';
     ChainAbstractionModule,
     InvestmentModule,
     AssetRatesModule,
+    DepositModule,
   ],
   controllers: [AppController],
   providers: [AppService],

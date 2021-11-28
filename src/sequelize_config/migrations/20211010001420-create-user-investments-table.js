@@ -33,7 +33,6 @@ module.exports = {
       amount: {
         allowNull: false,
         type: Sequelize.STRING,
-        defaultValue: '0',
       },
       status: {
         allowNull: false,

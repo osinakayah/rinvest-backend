@@ -15,7 +15,7 @@ module.exports = {
       },
       rates: {
         type: Sequelize.JSON,
-        defaultValue: {}, // admin, other
+        defaultValue: {},
       },
 
       createdAt: {
