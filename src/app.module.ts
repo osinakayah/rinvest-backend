@@ -20,6 +20,9 @@ import { InvestmentModule } from './investment/investment.module';
 import { UserInvestment } from './users/models/user.investment.entity';
 import { AssetRatesModule } from './asset-rates/asset-rates.module';
 import { DepositModule } from './deposit/deposit.module';
+import { InvestmentAddress } from './investment/models/investment.address.entity';
+import { Transactions } from './users/models/transaction.entity';
+import { UserAssetBalance } from './users/models/user.asset.balance';
 
 @Module({
   imports: [
@@ -32,13 +35,16 @@ import { DepositModule } from './deposit/deposit.module';
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME_DEVELOPMENT,
       models: [
-        User,
-        Token,
-        UserMnemonic,
-        Asset,
-        UserAddress,
-        UserInvestment,
         AssetNairaRate,
+        Asset,
+        InvestmentAddress,
+        Token,
+        Transactions,
+        UserAddress,
+        UserAssetBalance,
+        UserMnemonic,
+        UserInvestment,
+        User,
       ],
       synchronize: false,
     }),

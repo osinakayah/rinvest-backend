@@ -10,10 +10,18 @@ import { UsersService } from './users.service';
 import { ChainAbstractionModule } from '../chain-abstraction/chain-abstraction.module';
 import { UsersController } from './users.controller';
 import { InvestmentModule } from '../investment/investment.module';
+import { UserAssetBalance } from './models/user.asset.balance';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([User, Token, UserMnemonic, Asset, UserAddress]),
+    SequelizeModule.forFeature([
+      User,
+      Token,
+      UserMnemonic,
+      Asset,
+      UserAddress,
+      UserAssetBalance,
+    ]),
     ChainAbstractionModule,
     InvestmentModule,
   ],

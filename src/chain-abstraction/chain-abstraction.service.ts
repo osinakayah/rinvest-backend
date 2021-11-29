@@ -10,6 +10,7 @@ import { UserAddress } from '../users/models/user.address.entity';
 import { UserMnemonic } from '../users/models/user.mnemonic';
 import { ChainClientService } from './chain-client-service';
 import { AssetNairaRate } from '../asset-rates/models/naira-rate';
+import { UserAssetBalance } from '../users/models/user.asset.balance';
 import { prettyBalance } from './utils/coinFormatter';
 
 @Injectable()
@@ -20,6 +21,8 @@ export class ChainAbstractionService {
     @InjectModel(Asset) private assetModel: typeof Asset,
     @InjectModel(UserAddress) private userAddressModel: typeof UserAddress,
     @InjectModel(UserMnemonic) private userMnemonicModel: typeof UserMnemonic,
+    @InjectModel(UserAssetBalance)
+    private userAssetBalance: typeof UserAssetBalance,
     @InjectModel(AssetNairaRate)
     private assetNairaRateModel: typeof AssetNairaRate,
   ) {}
@@ -30,7 +33,7 @@ export class ChainAbstractionService {
       assets: [],
     };
 
-    const addresses = await this.userAddressModel.findAll({
+    const userAssetBalances = await this.userAssetBalance.findAll({
       where: {
         userId,
       },
@@ -42,38 +45,37 @@ export class ChainAbstractionService {
         },
       ],
     });
-    const userMnemonic = await this.userMnemonicModel.findOne({
-      where: {
-        userId,
-      },
-    });
 
-    if (userMnemonic) {
-      let sumBalance = new BN(0);
-      for (let i = 0; i < addresses.length; i++) {
-        const address = addresses[i];
+    const numberOfAssetBalances = userAssetBalances.length;
 
-        const client = this.chainClientService.createClient(
-          address.asset.code,
-          userMnemonic.mnemonic,
-        );
-        const balance =
-          addresses.length === 0
-            ? 0
-            : (await client.chain.getBalance([address.address])).toNumber();
+    let sumBalance = new BN(0);
+    for (let i = 0; i < numberOfAssetBalances; i++) {
+      const singleAssetBalance = userAssetBalances[i];
 
-        const currencyBalance = unitToCurrency(
-          cryptoassets[address.asset.code],
-          balance,
-        );
+      const addressModel = await this.userAddressModel.findOne({
+        where: {
+          userId,
+          assetId: singleAssetBalance.assetId,
+        },
+        attributes: ['address'],
+      });
+      if (addressModel) {
         const singleAsset = {
-          id: address.asset.id,
-          code: address.asset.code,
-          name: address.asset.name,
-          address: address.address,
-          balance: prettyBalance(balance, address.asset.code),
+          id: singleAssetBalance.assetId,
+          code: singleAssetBalance.asset.code,
+          name: singleAssetBalance.asset.name,
+          address: addressModel.address,
+          balance: prettyBalance(
+            singleAssetBalance.balance,
+            singleAssetBalance.asset.code,
+          ),
           fiatBalance: '0',
         };
+
+        const currencyBalance = unitToCurrency(
+          cryptoassets[singleAssetBalance.asset.code],
+          new BN(singleAssetBalance.balance).toNumber(),
+        );
 
         const rates = await this.assetNairaRateModel.findOne({
           where: {
@@ -81,9 +83,9 @@ export class ChainAbstractionService {
           },
           attributes: ['rates'],
         });
-        if (rates && rates.rates[address.asset.code]) {
+        if (rates && rates.rates[singleAssetBalance.asset.code]) {
           const r = new BN(currencyBalance).dividedBy(
-            rates.rates[address.asset.code],
+            rates.rates[singleAssetBalance.asset.code],
           );
           singleAsset.fiatBalance = `${r.toFormat(
             2,
@@ -93,8 +95,8 @@ export class ChainAbstractionService {
         }
         availableCoinsReport.assets.push(singleAsset);
       }
-      availableCoinsReport.sum = sumBalance.toFormat(2, BN.ROUND_CEIL);
     }
+    availableCoinsReport.sum = sumBalance.toFormat(2, BN.ROUND_CEIL);
 
     return availableCoinsReport;
   }

@@ -1,7 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/sequelize';
-import { User } from '../users/models/user.entity';
 import { Asset } from '../chain-abstraction/models/asset.entity';
 import { UserAddress } from '../users/models/user.address.entity';
 import { UserAssetBalance } from '../users/models/user.asset.balance';
@@ -36,8 +35,8 @@ export class DepositService {
       fromAssetOldBalance &&
       new BigNumber(fromAssetOldBalance.balance).gt(amount)
     ) {
+      const t = await this.sequelize.transaction();
       try {
-        const t = await this.sequelize.transaction();
         const oldToAssetBalance = await this.userAssetBalanceModel.findOne({
           where: {
             userId: toUserId,
@@ -84,6 +83,7 @@ export class DepositService {
         );
         await t.commit();
       } catch (e) {
+        await t.rollback();
         throw new HttpException(
           {
             status: HttpStatus.BAD_REQUEST,

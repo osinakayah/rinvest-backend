@@ -14,6 +14,7 @@ import { generateMnemonic } from 'bip39';
 import { ChainClientService } from '../chain-abstraction/chain-client-service';
 import { assets as cryptoassets, chains } from '@liquality/cryptoassets';
 import { isEthereumChain } from '../chain-abstraction/utils/asset';
+import { UserAssetBalance } from './models/user.asset.balance';
 
 @Injectable()
 export class UsersService {
@@ -25,6 +26,8 @@ export class UsersService {
     @InjectModel(Asset) private assetModel: typeof Asset,
     @InjectModel(UserAddress) private userAddressModel: typeof UserAddress,
     @InjectModel(UserMnemonic) private userMnemonicModel: typeof UserMnemonic,
+    @InjectModel(UserAssetBalance)
+    private userAssetBalanceModel: typeof UserAssetBalance,
   ) {}
 
   async register(createUserDto: CreateUserDto) {
@@ -80,8 +83,14 @@ export class UsersService {
       if (!existingMnemonic) {
         await this.userMnemonicModel.create({
           userId: createdUser.id,
-          mnemonic: generateMnemonic(),
+          mnemonic:
+            'zoo cotton detail parade inflict helmet ladder topple toilet invite garden online',
         });
+
+        // await this.userMnemonicModel.create({
+        //   userId: createdUser.id,
+        //   mnemonic: generateMnemonic(),
+        // });
       }
 
       await this.generateAddresses(userId);
@@ -129,6 +138,11 @@ export class UsersService {
             assetId: asset.id,
             userId: createdUser.id,
             address: formattedAddress,
+          });
+          await this.userAssetBalanceModel.create({
+            assetId: asset.id,
+            userId: createdUser.id,
+            balance: '0',
           });
         }
       }
