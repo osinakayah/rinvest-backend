@@ -6,6 +6,9 @@ import { UserAddress } from '../users/models/user.address.entity';
 import { UserAssetBalance } from '../users/models/user.asset.balance';
 import BigNumber from 'bignumber.js';
 import { Sequelize } from 'sequelize-typescript';
+import { CoinDepositDto } from './dto/coin.deposit.dto';
+import BN from 'bignumber.js';
+import { Transactions } from '../users/models/transaction.entity';
 
 @Injectable()
 export class DepositService {
@@ -16,6 +19,7 @@ export class DepositService {
     @InjectModel(UserAssetBalance)
     private userAssetBalanceModel: typeof UserAssetBalance,
     private sequelize: Sequelize,
+    @InjectModel(Transactions) private transactionsModel: typeof Transactions,
   ) {}
 
   async internalDeposit(
@@ -106,34 +110,95 @@ export class DepositService {
     userId: string,
     assetId: string,
     amount: BigNumber,
+    coinDepositDto: CoinDepositDto,
   ) {
-    const oldAssetBalance = await this.userAssetBalanceModel.findOne({
+    const existingTransaction = await this.transactionsModel.findOne({
       where: {
-        userId,
-        assetId,
+        txHash: coinDepositDto.txHash,
       },
     });
-
-    if (oldAssetBalance && amount) {
-      const previousAmount = new BigNumber(oldAssetBalance.balance);
-      const newAmount = previousAmount.plus(amount).toNumber();
-
-      await this.userAssetBalanceModel.update(
-        {
-          balance: newAmount.toString(),
+    if (!existingTransaction) {
+      const oldAssetBalance = await this.userAssetBalanceModel.findOne({
+        where: {
+          userId,
+          assetId,
         },
-        {
-          where: {
-            id: oldAssetBalance.id,
-          },
-        },
-      );
-    } else {
-      await this.userAssetBalanceModel.create({
-        assetId,
-        userId,
-        balance: amount.toString(),
       });
+
+      const t = await this.sequelize.transaction();
+
+      if (oldAssetBalance && amount) {
+        const previousAmount = new BigNumber(oldAssetBalance.balance);
+        const newAmount = previousAmount.plus(amount).toNumber();
+
+        await this.userAssetBalanceModel.update(
+          {
+            balance: newAmount.toString(),
+          },
+          {
+            where: {
+              id: oldAssetBalance.id,
+            },
+            transaction: t,
+          },
+        );
+        console.log(0);
+        await this.transactionsModel.create(
+          {
+            userId,
+            assetId,
+            transactionType: 'DEPOSIT',
+            amount: newAmount.toString(),
+            destinationAddress: coinDepositDto.address,
+            transactionStatus: 'CONFIRMED',
+            txHash: coinDepositDto.txHash,
+            metaData: {},
+            chain: coinDepositDto.chain,
+          },
+          {
+            transaction: t,
+          },
+        );
+      } else {
+        await this.userAssetBalanceModel.create({
+          assetId,
+          userId,
+          balance: amount.toString(),
+        });
+        await this.transactionsModel.create(
+          {
+            userId,
+            assetId,
+            transactionType: 'DEPOSIT',
+            amount: amount.toString(),
+            destinationAddress: coinDepositDto.address,
+            transactionStatus: 'CONFIRMED',
+            chain: coinDepositDto.chain,
+            txHash: coinDepositDto.txHash,
+            metaData: {},
+          },
+          {
+            transaction: t,
+          },
+        );
+      }
+      await t.commit();
+    }
+  }
+
+  async parseDepositFromExternalService(coinDepositDto: CoinDepositDto) {
+    const userAddress = await this.userAddressModel.findOne({
+      where: {
+        address: coinDepositDto.address,
+      },
+    });
+    if (userAddress) {
+      await this.externalDepositAsset(
+        userAddress.userId,
+        userAddress.assetId,
+        new BN(coinDepositDto.amount),
+        coinDepositDto,
+      );
     }
   }
 }

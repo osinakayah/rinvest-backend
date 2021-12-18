@@ -46,7 +46,7 @@ import { UserAssetBalance } from './users/models/user.asset.balance';
         UserInvestment,
         User,
       ],
-      synchronize: false,
+      synchronize: true,
     }),
     UsersModule,
     AuthModule,

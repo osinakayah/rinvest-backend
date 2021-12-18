@@ -10,7 +10,7 @@ export interface ITransaction {
   txHash: string;
 
   transactionStatus: string;
-  network: string;
+  chain: string;
 
   metaData: any;
 }

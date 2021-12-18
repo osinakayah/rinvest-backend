@@ -21,6 +21,10 @@ const options = {
       fields: ['id'],
     },
     {
+      unique: true,
+      fields: ['txHash'],
+    },
+    {
       fields: ['assetId'],
     },
     {
@@ -79,9 +83,10 @@ export class Transactions extends Model<ITransaction> {
 
   @Column({
     allowNull: false,
-    type: DataType.STRING,
+    type: DataType.ENUM,
+    values: ['bitcoin', 'ethereum', 'bsc', 'internal'],
   })
-  network: string;
+  chain: string;
 
   @Column({
     allowNull: false,

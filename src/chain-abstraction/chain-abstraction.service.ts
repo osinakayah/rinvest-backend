@@ -65,17 +65,11 @@ export class ChainAbstractionService {
           code: singleAssetBalance.asset.code,
           name: singleAssetBalance.asset.name,
           address: addressModel.address,
-          balance: prettyBalance(
-            singleAssetBalance.balance,
-            singleAssetBalance.asset.code,
-          ),
+          balance: singleAssetBalance.balance,
           fiatBalance: '0',
         };
 
-        const currencyBalance = unitToCurrency(
-          cryptoassets[singleAssetBalance.asset.code],
-          new BN(singleAssetBalance.balance).toNumber(),
-        );
+        const currencyBalance = new BN(singleAssetBalance.balance);
 
         const rates = await this.assetNairaRateModel.findOne({
           where: {
@@ -84,7 +78,7 @@ export class ChainAbstractionService {
           attributes: ['rates'],
         });
         if (rates && rates.rates[singleAssetBalance.asset.code]) {
-          const r = new BN(currencyBalance).dividedBy(
+          const r = currencyBalance.dividedBy(
             rates.rates[singleAssetBalance.asset.code],
           );
           singleAsset.fiatBalance = `${r.toFormat(

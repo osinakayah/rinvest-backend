@@ -51,20 +51,18 @@ export class InvestmentService {
     });
     let sumBalance = new BN(0);
     const assets = userInvestments.map((singleUserInvestments) => {
-      const currencyBalance = prettyBalance(
-        singleUserInvestments.amount,
-        singleUserInvestments.asset.code,
-      );
+      const currencyBalance = new BN(singleUserInvestments.amount);
+
       const singleAsset = {
         id: singleUserInvestments.asset.id,
         code: singleUserInvestments.asset.code,
         name: singleUserInvestments.asset.name,
         address: '',
-        balance: currencyBalance,
+        balance: singleUserInvestments.amount,
         fiatBalance: '0',
       };
       if (rates && rates.rates[singleUserInvestments.asset.code]) {
-        const r = new BN(currencyBalance).dividedBy(
+        const r = currencyBalance.dividedBy(
           rates.rates[singleUserInvestments.asset.code],
         );
         singleAsset.fiatBalance = `${r.toFormat(2, BN.ROUND_CEIL)} ${fiatCode}`;

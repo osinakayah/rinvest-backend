@@ -47,6 +47,7 @@ module.exports = {
       txHash: {
         allowNull: false,
         type: Sequelize.STRING,
+        unique: true,
       },
       transactionStatus: {
         allowNull: false,
@@ -54,15 +55,16 @@ module.exports = {
         values: ['CONFIRMING', 'FAILED', 'CONFIRMED'],
         comment: 'The status of the transaction,',
       },
-      network: {
-        allowNull: false,
-        type: Sequelize.ENUM,
-        values: ['BTC', 'ETH', 'BSC', 'INTERNAL'],
-        comment: 'The network on which this transaction was made',
-      },
+
       metaData: {
         type: Sequelize.JSON,
         defaultValue: {},
+      },
+      network: {
+        allowNull: false,
+        type: Sequelize.ENUM,
+        values: ['bitcoin', 'ethereum', 'bsc', 'internal'],
+        comment: 'The network on which this transaction was made',
       },
       createdAt: {
         allowNull: false,
@@ -75,6 +77,10 @@ module.exports = {
     });
   },
   down: async (queryInterface, Sequelize) => {
+    // const allEnums = queryInterface./
+    // await queryInterface.sequelize.query(
+    //   'DROP TYPE "public.enum_Transactions_network";',
+    // );
     await queryInterface.dropTable('Transactions');
   },
 };
