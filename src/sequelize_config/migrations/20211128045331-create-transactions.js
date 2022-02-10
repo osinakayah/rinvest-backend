@@ -60,7 +60,7 @@ module.exports = {
         type: Sequelize.JSON,
         defaultValue: {},
       },
-      network: {
+      chain: {
         allowNull: false,
         type: Sequelize.ENUM,
         values: ['bitcoin', 'ethereum', 'bsc', 'internal'],

@@ -142,13 +142,12 @@ export class DepositService {
             transaction: t,
           },
         );
-        console.log(0);
         await this.transactionsModel.create(
           {
             userId,
             assetId,
             transactionType: 'DEPOSIT',
-            amount: newAmount.toString(),
+            amount: coinDepositDto.amount.toString(),
             destinationAddress: coinDepositDto.address,
             transactionStatus: 'CONFIRMED',
             txHash: coinDepositDto.txHash,
@@ -170,7 +169,7 @@ export class DepositService {
             userId,
             assetId,
             transactionType: 'DEPOSIT',
-            amount: amount.toString(),
+            amount: coinDepositDto.amount.toString(),
             destinationAddress: coinDepositDto.address,
             transactionStatus: 'CONFIRMED',
             chain: coinDepositDto.chain,

@@ -7,6 +7,7 @@ export class DepositController {
   constructor(private readonly depositService: DepositService) {}
   @Post('')
   async onDepositMade(@Request() req, @Body() createUserDto: CoinDepositDto) {
+    console.log(createUserDto);
     await this.depositService.parseDepositFromExternalService(createUserDto);
   }
 }
